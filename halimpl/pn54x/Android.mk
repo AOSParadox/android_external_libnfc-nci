@@ -13,14 +13,6 @@
 # limitations under the License.
 
 
-# function to find all *.cpp files under a directory
-define all-cpp-files-under
-$(patsubst ./%,%, \
-  $(shell cd $(LOCAL_PATH) ; \
-          find $(1) -name "*.cpp" -and -not -name ".*") \
- )
-endef
-
 ifneq ($(BOARD_NFC_HAL_SUFFIX),)
     HAL_SUFFIX := pn54x.$(BOARD_NFC_HAL_SUFFIX)
 else
@@ -33,15 +25,12 @@ else
     NFC_DEVICE := $(BOARD_NFC_DEVICE)
 endif
 
-LOCAL_PRELINK_MODULE := false
-LOCAL_ARM_MODE := arm
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_MODULE := nfc_nci.$(HAL_SUFFIX)
 LOCAL_MODULE_RELATIVE_PATH := hw
-LOCAL_SRC_FILES := $(call all-c-files-under, .)  $(call all-cpp-files-under, .)
+LOCAL_SRC_FILES := $(call all-subdir-c-files)  $(call all-subdir-cpp-files)
 LOCAL_SHARED_LIBRARIES := liblog libcutils libhardware_legacy libdl libhardware
-LOCAL_MODULE_TAGS := optional
 
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/utils \
